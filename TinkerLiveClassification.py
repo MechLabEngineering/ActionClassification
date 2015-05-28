@@ -1,6 +1,14 @@
 
 # coding: utf-8
 
+# # Real Time Activity Classification
+# 
+# We'll use a [Tinkerforge IMU](http://www.tinkerforge.com/en/doc/Hardware/Bricks/IMU_Brick.html)
+# 
+# ![IMU](http://www.tinkerforge.com/en/doc/_images/Bricks/brick_imu_tilted_front_350.jpg)
+# 
+# ### Connection settings
+
 # In[31]:
 
 HOST = "localhost"
@@ -14,10 +22,12 @@ from tinkerforge.ip_connection import IPConnection
 from tinkerforge.brick_imu import IMU
 
 
+# ### Load the Classifier
+
 # In[33]:
 
 import pickle
-with open('DTclassifier.pkl', 'rb') as fid:
+with open('SVClassifier.pkl', 'rb') as fid:
     classifier = pickle.load(fid)
 
 print('Classifier loaded.')
@@ -81,10 +91,18 @@ def collect(ax, ay, az, rollrate, pitchrate, yawrate, temp, signals=[]):
     signals.append([ax, ay, az, rollrate, pitchrate, yawrate, temp])
     
     #print len(signals)
-    if len(signals)>49:
+    ws = 1.0 # windowsize in seconds
+    sp = 10.0 # sample period of sensor in milliseconds (see Callback of Tinkerforge IMU)
+    
+    if len(signals)>(ws/(sp/1000)):
         classify(signals) # send everything to classifier
         
         del signals[:] # clear signal vector
+
+
+# In[ ]:
+
+
 
 
 # In[39]:

@@ -1,36 +1,34 @@
 
 # coding: utf-8
 
-# In[58]:
+# In[10]:
 
 import pandas as pd
 import os
 
 
-# In[ ]:
+# # Prepare the logfiles to learn with the raw data
+# 
+# the `.log` files were recorded with an old version of the great [SensorLog App for iOS](https://itunes.apple.com/us/app/sensorlog/id388014573?mt=8). Thanks Bernd Thomas!
 
-
-
-
-# In[59]:
+# In[11]:
 
 csvs = [files for files in os.listdir('./') if files.endswith('.log')]
 
 pd.read_csv(csvs[1]).head(5)
 
 
-# In[ ]:
+# ## Dump activities in one file with labels
+# 
+# just a snipped of the whole data
 
-
-
-
-# In[60]:
+# In[12]:
 
 von = 6.0
 bis = 14.0
 
 
-# In[61]:
+# In[13]:
 
 values = ['accelerationX','accelerationY','accelerationZ','motionRotationRateX','motionRotationRateY', 'motionRotationRateZ']
 
@@ -47,7 +45,7 @@ for csv in csvs:
     data.index = data.time
     data = data[values] # just keep relevant values
 
-    data['activity'] = csv.split('_')[0] # label data
+    data['activity'] = csv.split('_')[1] # label data
     
     with open('activitydata.csv', 'a') as f:
         data.to_csv(f, header=False, float_format='%.6f')
