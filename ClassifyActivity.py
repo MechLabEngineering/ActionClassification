@@ -12,7 +12,7 @@
 # * PyData Berlin 2015, 29. - 30.05.2015, Betahaus Berlin
 # 
 
-# In[239]:
+# In[1]:
 
 from IPython.display import VimeoVideo
 VimeoVideo('125699039', width=16*50, height=9*50)
@@ -20,7 +20,7 @@ VimeoVideo('125699039', width=16*50, height=9*50)
 
 # ## Load the stuff we need
 
-# In[240]:
+# In[2]:
 
 import pandas as pd
 print('Pandas Version:\t%s' % pd.__version__)
@@ -37,29 +37,29 @@ sns.set_style('whitegrid')
 # 
 # the `activitydata.csv` is prepared by the `prepData.ipynb`
 
-# In[241]:
+# In[3]:
 
 data = pd.read_csv('activitydata.csv', index_col=['timestamp'], parse_dates=True)
 
 
-# In[242]:
+# In[4]:
 
 dt = 1.0/50.0 # the activities were with 50Hz
 data.index = np.arange(0, len(data)*dt, dt)
 data.index.name='time'
 
 
-# In[243]:
+# In[5]:
 
 data.head(5)
 
 
-# In[244]:
+# In[6]:
 
 activities = data.groupby('activity')
 
 
-# In[245]:
+# In[7]:
 
 activities.describe()
 
@@ -74,13 +74,13 @@ activities.describe()
 # 
 # to get rid of the orientation of the device
 
-# In[246]:
+# In[8]:
 
 def absacc(row):
     return np.sqrt(row['accelerationX']**2 + row['accelerationY']**2 + row['accelerationZ']**2)
 
 
-# In[247]:
+# In[9]:
 
 data['absacc'] = data.apply(absacc, axis=1)
 
@@ -96,12 +96,12 @@ data.absacc[data.activity=='sitting'].plot(ax=axes[1,1], ylim=(0,5)); axes[1,1].
 # 
 # difference between maximum and minimum acceleration with `rolling_max` and `rolling_min` 
 
-# In[248]:
+# In[10]:
 
 ws=1.0/dt # Window Size
 
 
-# In[249]:
+# In[11]:
 
 data['accmax'] = pd.rolling_max(data['absacc'], ws)
 data['accmin'] = pd.rolling_min(data['absacc'], ws)
@@ -111,7 +111,7 @@ data['accmaxmindiff'] = data.accmax - data.accmin
 
 # ### What's that `rolling_min` and `rolling_max`?
 
-# In[250]:
+# In[12]:
 
 fig, ax = plt.subplots()
 data.absacc[data.activity=='running'].plot(ax=ax, label='acc')
@@ -121,7 +121,7 @@ plt.legend()
 plt.ylabel('acc in $g$')
 
 
-# In[251]:
+# In[13]:
 
 # Let's take a look
 fig, axes = plt.subplots(nrows=2, ncols=2)
@@ -133,12 +133,12 @@ data.accmaxmindiff[data.activity=='sitting'].plot(ax=axes[1,1], ylim=(0,5)); axe
 
 # ### Let's take a look at these features
 
-# In[252]:
+# In[14]:
 
 activities = data.groupby('activity')
 
 
-# In[253]:
+# In[15]:
 
 fig, ax = plt.subplots()
 for activity, group in activities:
@@ -155,7 +155,7 @@ plt.ylabel(r'$|a|$ in [$g$]')
 # 
 # Let's take a look at the rotation rate of the device
 
-# In[254]:
+# In[16]:
 
 fig, ax = plt.subplots()
 data.motionRotationRateX[data.activity=='walking'].plot(ax=ax, label='walking')
@@ -170,7 +170,7 @@ plt.legend(loc='best')
 # 
 # ![FFT](http://www.cbcity.de/wp-content/uploads/2013/08/Time-2-Frequency-Domain-FFT.gif)
 
-# In[255]:
+# In[17]:
 
 def fft_amplitude(s, kind='peak'):
     
@@ -197,7 +197,7 @@ def fft_amplitude(s, kind='peak'):
 
 # ### Let's take a look
 
-# In[256]:
+# In[18]:
 
 #plt.figure(figsize=(9, 4.5))
 colors = sns.color_palette()#['#FF6700', '#CAF278', '#3E3D2D', '#94C600']
@@ -213,12 +213,12 @@ plt.legend()
 
 # OK, that is a good feature, so let's use it for the whole dataset with `rolling_apply`.
 
-# In[257]:
+# In[19]:
 
 data['fftamppeak'] = pd.rolling_apply(data['motionRotationRateX'], ws, fft_amplitude)
 
 
-# In[258]:
+# In[20]:
 
 fig, ax = plt.subplots()
 data.fftamppeak[data.activity=='walking'].plot(ax=ax, label='walking')
@@ -234,7 +234,7 @@ plt.ylabel(r'fft amplitude peak in [$rad/s$]')
 # 
 # Because of the `rolling_` functions, there is overlap between the activity features and the labels, corresponding to it. We have to delete some rows (length of window), before using a classifier.
 
-# In[259]:
+# In[21]:
 
 data.drop(data[data.activity=='running'].iloc[0:int(ws)-1].index, inplace=True)
 data.drop(data[data.activity=='walking'].iloc[0:int(ws)-1].index, inplace=True)
@@ -246,7 +246,7 @@ data.drop(data[data.activity=='sitting'].iloc[0:int(ws)-1].index, inplace=True)
 # 
 # ## Features
 
-# In[260]:
+# In[22]:
 
 activities = data.groupby('activity')
 
@@ -263,7 +263,7 @@ plt.ylim(-0.5,4)
 
 # # Scikit-Learn is our friend
 
-# In[261]:
+# In[23]:
 
 from sklearn.svm import SVC
 from sklearn.cross_validation import train_test_split
@@ -271,13 +271,13 @@ from sklearn.metrics import accuracy_score
 from sklearn import preprocessing
 
 
-# In[262]:
+# In[24]:
 
 labels = data['activity'].values
 np.shape(labels)
 
 
-# In[263]:
+# In[25]:
 
 featurevector = ['accmaxmindiff','fftamppeak']
 
@@ -287,7 +287,7 @@ np.shape(features)
 
 # ### Split in training and test
 
-# In[264]:
+# In[26]:
 
 features_train, features_test, labels_train, labels_test = train_test_split(features, labels, test_size=0.2, random_state=42)
 
@@ -296,17 +296,17 @@ np.shape(labels_test)
 
 # ## Support Vector Classifier
 
-# In[265]:
+# In[27]:
 
 SVClassifier = SVC(kernel='linear').fit(features_train, labels_train)
 
 
-# In[266]:
+# In[28]:
 
 labels_predict_SVC = SVClassifier.predict(features_test)
 
 
-# In[267]:
+# In[29]:
 
 accuracy_score(labels_predict_SVC, labels_test)
 
@@ -315,19 +315,19 @@ accuracy_score(labels_predict_SVC, labels_test)
 # 
 # First we need to convert the labels (strings) to numerical values. There the `LabelEncoder` comes in...
 
-# In[268]:
+# In[30]:
 
 le = preprocessing.LabelEncoder()
 le.fit(labels_predict_SVC)
 list(le.classes_)
 
 
-# In[269]:
+# In[31]:
 
 colors=sns.color_palette()
 
 
-# In[270]:
+# In[32]:
 
 fig, ax = plt.subplots(figsize=(10,6))
 for activity, group in activities:
@@ -344,17 +344,17 @@ Z = SVClassifier.predict(np.c_[xx.ravel(), yy.ravel()])
 Zn = le.transform(Z).reshape(xx.shape)
 plt.contourf(xx, yy, Zn, colors=('b','w','g','w','r','w','w','w'), alpha=0.2)
 plt.title('Decision Boundaries of Support Vector Classifier with features for 4 different activities')
-plt.savefig('SVCClassifier.png', dpi=150)
+plt.savefig('SVClassifier.png', dpi=150)
 
 
 # # Save the Classifier
 
-# In[271]:
+# In[33]:
 
 import pickle
 
 
-# In[272]:
+# In[34]:
 
 with open('./SVClassifier.pkl', 'wb') as fid:
     pickle.dump(SVClassifier, fid)        
