@@ -3,7 +3,7 @@ Using Acceleration and Rotationrate of a Device to estimate if sitting, running,
 
 See [Video on Vimeo](https://vimeo.com/mechlabengineering/activityclassification)
 
-![Classification](Classification.png)
+![Classification](Classification2.png)
 
 ## Support Vector Classfier
 
@@ -12,7 +12,14 @@ Features used:
 * difference of absolute acceleration
 * FFT amplitude peak of rotation rate
 
-![SVC](SVClassifier.png)
+### Accuracy
+
+Trained/Tested with the [PAMAP2 Dataset](http://pamap.org/demo.html) (subject 106) and got following accuracy:
+* 98.68% standing
+* 97.84% walking
+* 94.89% cycling
+* 100.0% running
+
 
 ## Live Demo
 
