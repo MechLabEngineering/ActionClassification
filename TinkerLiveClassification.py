@@ -9,14 +9,14 @@
 # 
 # ### Connection settings
 
-# In[31]:
+# In[1]:
 
 HOST = "localhost"
 PORT = 4223
-UID = "6xDXqN" # Change to your UID
+UID = "6QFQ21" # Change to your UID
 
 
-# In[32]:
+# In[2]:
 
 from tinkerforge.ip_connection import IPConnection
 from tinkerforge.brick_imu import IMU
@@ -24,7 +24,7 @@ from tinkerforge.brick_imu import IMU
 
 # ### Load the Classifier
 
-# In[33]:
+# In[3]:
 
 import pickle
 with open('SVClassifier.pkl', 'rb') as fid:
@@ -33,14 +33,14 @@ with open('SVClassifier.pkl', 'rb') as fid:
 print('Classifier loaded.')
 
 
-# In[34]:
+# In[4]:
 
 import numpy as np
 
 
 # ## Feature Calculation
 
-# In[35]:
+# In[5]:
 
 def fft_amplitude_peak(s):
     
@@ -58,14 +58,14 @@ def fft_amplitude_peak(s):
     #return np.max(Y) / np.mean(Y) # return periodicity
 
 
-# In[36]:
+# In[6]:
 
 def accmaxmindiff(ax,ay,az):
     absacc = np.sqrt(ax**2 + ay**2 + az**2)
     return np.max(absacc)-np.min(absacc)
 
 
-# In[37]:
+# In[7]:
 
 def classify(sensordata):
     #print signal
@@ -84,7 +84,7 @@ def classify(sensordata):
     print('%s' % (activity))
 
 
-# In[38]:
+# In[8]:
 
 def collect(ax, ay, az, rollrate, pitchrate, yawrate, temp, signals=[]):
     
@@ -105,7 +105,7 @@ def collect(ax, ay, az, rollrate, pitchrate, yawrate, temp, signals=[]):
 
 
 
-# In[39]:
+# In[9]:
 
 def cb_imudynamic(acc_x, acc_y, acc_z, mag_x, mag_y, mag_z, ang_x, ang_y, ang_z, temp):
     '''
@@ -133,7 +133,7 @@ def cb_imudynamic(acc_x, acc_y, acc_z, mag_x, mag_y, mag_z, ang_x, ang_y, ang_z,
 
 
 
-# In[40]:
+# In[10]:
 
 if __name__ == "__main__":
     

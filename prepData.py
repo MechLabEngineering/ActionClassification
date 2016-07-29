@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[10]:
+# In[1]:
 
 import pandas as pd
 import os
@@ -11,7 +11,7 @@ import os
 # 
 # the `.log` files were recorded with an old version of the great [SensorLog App for iOS](https://itunes.apple.com/us/app/sensorlog/id388014573?mt=8). Thanks Bernd Thomas!
 
-# In[11]:
+# In[2]:
 
 csvs = [files for files in os.listdir('./') if files.endswith('.log')]
 
@@ -22,13 +22,13 @@ pd.read_csv(csvs[1]).head(5)
 # 
 # just a snipped of the whole data
 
-# In[12]:
+# In[3]:
 
 von = 6.0
 bis = 14.0
 
 
-# In[13]:
+# In[4]:
 
 values = ['accelerationX','accelerationY','accelerationZ','motionRotationRateX','motionRotationRateY', 'motionRotationRateZ']
 
